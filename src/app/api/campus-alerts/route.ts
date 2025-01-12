@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 
+export const runtime = 'edge';
+
 export async function GET() {
   try {
     const response = await fetch('https://bso.ucla.edu/', {
-      next: { revalidate: 300 } // Cache for 5 minutes
+      next: { revalidate: 900 } // Cache for 15 minutes
     });
 
     if (!response.ok) {

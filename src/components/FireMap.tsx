@@ -7,6 +7,8 @@ import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import Graphic from '@arcgis/core/Graphic';
 import Point from '@arcgis/core/geometry/Point';
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
+import SimpleFillSymbol from "@arcgis/core/symbols/SimpleFillSymbol";
+import UniqueValueRenderer from "@arcgis/core/renderers/UniqueValueRenderer";
 import Legend from "@arcgis/core/widgets/Legend";
 import LayerList from "@arcgis/core/widgets/LayerList";
 import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
@@ -14,7 +16,25 @@ import Search from "@arcgis/core/widgets/Search";
 import Expand from "@arcgis/core/widgets/Expand";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 
-export default function FireMap() {
+interface FireMapProps {
+  layerVisibility: {
+    // Fire Layers
+    activeFires: boolean;
+    firePerimeters: boolean;
+    redFlagWarnings: boolean;
+    // hotspots: boolean;
+    // fireWeather: boolean;
+    // fireStations: boolean;
+    
+    // Evacuation Layers
+    // estimatedEvacTime: boolean;  // EstimatedGroundEvacuationTime
+    // evacuationAreas: boolean;    // Evacuation_Areas
+    currentEvacAreas: boolean;   // EvacuationAreas
+    // watchEvacAreas: boolean;     // 2024Watch_EvacuationAreas_Public
+  };
+}
+
+export default function FireMap({ layerVisibility }: FireMapProps) {
   const mapDiv = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,9 +47,9 @@ export default function FireMap() {
         container: mapDiv.current,
         map: map,
         center: [-118.4452, 34.0689], // UCLA coordinates
-        zoom: 10,
+        zoom: 11,
         constraints: {
-          minZoom: 8,
+          minZoom: 10,
           maxZoom: 18
         }
       });
@@ -38,7 +58,7 @@ export default function FireMap() {
       const activeFiresLayer = new FeatureLayer({
         url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USA_Wildfires_v1/FeatureServer/0",
         title: "Active Wildfires",
-        visible: true,
+        visible: layerVisibility.activeFires,
         popupTemplate: {
           title: "Wildfire: {IncidentName}",
           content: [
@@ -60,10 +80,20 @@ export default function FireMap() {
 
       // Fire Perimeter Layer
       const firePerimetersLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFAP_Perimeters_Current/FeatureServer/0",
+        url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/1",
         title: "Fire Perimeters",
-        visible: true,
+        visible: layerVisibility.firePerimeters,
         opacity: 0.7,
+        renderer: new UniqueValueRenderer({
+          field: "IncidentName",
+          defaultSymbol: new SimpleFillSymbol({
+            color: [139, 0, 0, 0.7], // Darker red
+            outline: {
+              color: [139, 0, 0], // Matching outline
+              width: 2
+            }
+          })
+        }),
         popupTemplate: {
           title: "Fire Perimeter: {IncidentName}",
           content: [
@@ -81,63 +111,219 @@ export default function FireMap() {
       });
 
       // MODIS Thermal Hotspots
-      const hotspotLayer = new FeatureLayer({
-        url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USA_Wildfires_v1/FeatureServer/1",
-        title: "Thermal Hotspots",
-        visible: true,
-        popupTemplate: {
-          title: "Thermal Detection",
-          content: [
-            {
-              type: "fields",
-              fieldInfos: [
-                { fieldName: "Confidence", label: "Confidence" },
-                { fieldName: "AcquisitionDate", label: "Detected" },
-                { fieldName: "Temperature", label: "Temperature (K)" }
-              ]
-            }
-          ]
-        }
-      });
+    //   const hotspotLayer = new FeatureLayer({
+    //     url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USA_Wildfires_v1/FeatureServer/1",
+    //     title: "Thermal Hotspots",
+    //     visible: layerVisibility.hotspots,
+    //     popupTemplate: {
+    //       title: "Thermal Detection",
+    //       content: [
+    //         {
+    //           type: "fields",
+    //           fieldInfos: [
+    //             { fieldName: "Confidence", label: "Confidence" },
+    //             { fieldName: "AcquisitionDate", label: "Detected" },
+    //             { fieldName: "Temperature", label: "Temperature (K)" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   });
 
-      // Evacuation Zones Layer
-      const evacuationZonesLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/USA_Evacuation_Zones/FeatureServer/0",
-        title: "Evacuation Zones",
-        visible: true,
-        opacity: 0.6,
-        definitionExpression: "EVACUATION_STATUS IN ('MANDATORY', 'WARNING', 'ADVISORY')",
-        popupTemplate: {
-          title: "Evacuation Zone",
-          content: [
-            {
-              type: "fields",
-              fieldInfos: [
-                { fieldName: "EVACUATION_STATUS", label: "Status" },
-                { fieldName: "EVACUATION_TYPE", label: "Type" },
-                { fieldName: "DATE_UPDATED", label: "Last Updated" }
-              ]
-            }
-          ]
-        }
-      });
+      // Fire Weather Warnings Layer
+    //   const fireWeatherLayer = new FeatureLayer({
+    //     url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NWS_Watches_Warnings_v1/FeatureServer/0",
+    //     title: "Fire Weather Warnings",
+    //     visible: layerVisibility.fireWeather,
+    //     opacity: 0.6,
+    //     renderer: new UniqueValueRenderer({
+    //       field: "prod_type",
+    //       defaultSymbol: new SimpleFillSymbol({
+    //         color: [255, 140, 0, 0.2],
+    //         outline: {
+    //           color: [255, 140, 0],
+    //           width: 1.5
+    //         }
+    //       }),
+    //       uniqueValueInfos: [
+    //         {
+    //           value: "Fire Weather Watch",
+    //           symbol: new SimpleFillSymbol({
+    //             color: [255, 140, 0, 0.2],
+    //             outline: {
+    //               color: [255, 140, 0],
+    //               width: 1.5
+    //             }
+    //           })
+    //         },
+    //         {
+    //           value: "Red Flag Warning",
+    //           symbol: new SimpleFillSymbol({
+    //             color: [255, 0, 0, 0.2],
+    //             outline: {
+    //               color: [255, 0, 0],
+    //               width: 1.5
+    //             }
+    //           })
+    //         }
+    //       ]
+    //     }),
+    //     popupTemplate: {
+    //       title: "{prod_type}",
+    //       content: [
+    //         {
+    //           type: "fields",
+    //           fieldInfos: [
+    //             { fieldName: "prod_type", label: "Type" },
+    //             { fieldName: "starttime", label: "Start Time" },
+    //             { fieldName: "endtime", label: "End Time" },
+    //             { fieldName: "description", label: "Description" }
+    //           ]
+    //         }
+    //       ]
+    //     },
+    //     definitionExpression: "prod_type IN ('Fire Weather Watch', 'Red Flag Warning')"
+    //   });
 
       // Fire Stations Layer
-      const fireStationsLayer = new FeatureLayer({
-        url: "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Fire_Stations/FeatureServer/0",
-        title: "Fire Stations",
-        visible: true,
+    //   const fireStationsLayer = new FeatureLayer({
+    //     url: "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Fire_Stations/FeatureServer/0",
+    //     title: "Fire Stations",
+    //     visible: layerVisibility.fireStations,
+    //     popupTemplate: {
+    //       title: "Fire Station: {NAME}",
+    //       content: [
+    //         {
+    //           type: "fields",
+    //           fieldInfos: [
+    //             { fieldName: "ADDRESS", label: "Address" },
+    //             { fieldName: "CITY", label: "City" },
+    //             { fieldName: "STATE", label: "State" },
+    //             { fieldName: "ZIP", label: "ZIP" },
+    //             { fieldName: "TELEPHONE", label: "Phone" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   });
+
+      // Evacuation Areas Layer
+    //   const evacuationAreasLayer = new FeatureLayer({
+    //     url: "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Evacuation_Areas/FeatureServer/261",
+    //     title: "Evacuation Areas",
+    //     visible: layerVisibility.evacuationAreas,
+    //     opacity: 0.7,
+    //     renderer: new UniqueValueRenderer({
+    //       field: "EVACTYPE",
+    //       defaultSymbol: new SimpleFillSymbol({
+    //         color: [255, 0, 0, 0.3],
+    //         outline: {
+    //           color: [255, 0, 0],
+    //           width: 2
+    //         }
+    //       })
+    //     }),
+    //     popupTemplate: {
+    //       title: "Evacuation Area",
+    //       content: [
+    //         {
+    //           type: "fields",
+    //           fieldInfos: [
+    //             { fieldName: "EVACTYPE", label: "Type" },
+    //             { fieldName: "AGENCY", label: "Agency" },
+    //             { fieldName: "DESCRIPTION", label: "Description" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   });
+
+      // 2024 Watch Evacuation Areas Layer
+    //   const watchEvacAreasLayer = new FeatureLayer({
+    //     url: "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/2024Watch_EvacuationAreas_Public/FeatureServer/0",
+    //     title: "2024 Watch Evacuation Areas",
+    //     visible: layerVisibility.watchEvacAreas,
+    //     opacity: 0.7,
+    //     renderer: new UniqueValueRenderer({
+    //       field: "EVACTYPE",
+    //       defaultSymbol: new SimpleFillSymbol({
+    //         color: [255, 165, 0, 0.3],
+    //         outline: {
+    //           color: [255, 165, 0],
+    //           width: 2
+    //         }
+    //       })
+    //     }),
+    //     popupTemplate: {
+    //       title: "Watch Evacuation Area",
+    //       content: [
+    //         {
+    //           type: "fields",
+    //           fieldInfos: [
+    //             { fieldName: "EVACTYPE", label: "Type" },
+    //             { fieldName: "AGENCY", label: "Agency" },
+    //             { fieldName: "DESCRIPTION", label: "Description" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   });
+
+      // Estimated Ground Evacuation Time Layer
+    //   const evacTimeLayer = new FeatureLayer({
+    //     url: "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/EstimatedGroundEvacuationTime/FeatureServer/0",
+    //     title: "Estimated Evacuation Time",
+    //     visible: layerVisibility.estimatedEvacTime,
+    //     opacity: 0.7,
+    //     renderer: new UniqueValueRenderer({
+    //       field: "EvacTime",
+    //       defaultSymbol: new SimpleFillSymbol({
+    //         color: [0, 0, 255, 0.3],
+    //         outline: {
+    //           color: [0, 0, 255],
+    //           width: 1
+    //         }
+    //       })
+    //     }),
+    //     popupTemplate: {
+    //       title: "Evacuation Time Estimate",
+    //       content: [
+    //         {
+    //           type: "fields",
+    //           fieldInfos: [
+    //             { fieldName: "EvacTime", label: "Evacuation Time (minutes)" },
+    //             { fieldName: "RoadClass", label: "Road Class" }
+    //           ]
+    //         }
+    //       ]
+    //     }
+    //   });
+
+      // Current Evacuation Areas Layer
+      const currentEvacAreasLayer = new FeatureLayer({
+        url: "https://services5.arcgis.com/bz1uwWPKUInZBK94/arcgis/rest/services/California_Combined_Statewide_Evacuation_Public_View/FeatureServer/0?f=json",
+        title: "Current Evacuation Areas",
+        visible: layerVisibility.currentEvacAreas,
+        opacity: 0.7,
+        renderer: new UniqueValueRenderer({
+          field: "EVACTYPE",
+          defaultSymbol: new SimpleFillSymbol({
+            color: [255, 215, 0, 0.3],
+            outline: {
+              color: [255, 215, 0],
+              width: 2
+            }
+          })
+        }),
         popupTemplate: {
-          title: "Fire Station: {NAME}",
+          title: "Current Evacuation Area",
           content: [
             {
               type: "fields",
               fieldInfos: [
-                { fieldName: "ADDRESS", label: "Address" },
-                { fieldName: "CITY", label: "City" },
-                { fieldName: "STATE", label: "State" },
-                { fieldName: "ZIP", label: "ZIP" },
-                { fieldName: "TELEPHONE", label: "Phone" }
+                { fieldName: "EVACTYPE", label: "Type" },
+                { fieldName: "AGENCY", label: "Agency" },
+                { fieldName: "DESCRIPTION", label: "Description" }
               ]
             }
           ]
@@ -145,21 +331,31 @@ export default function FireMap() {
       });
 
       // Red Flag Warnings Layer
-      const redFlagLayer = new FeatureLayer({
-        url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USA_Wildfires_v1/FeatureServer/2",
+      const redFlagWarningsLayer = new FeatureLayer({
+        url: "https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/NWS_Red_Flag_Warning_CAL_FIRE_Public/FeatureServer/0",
         title: "Red Flag Warnings",
-        visible: true,
-        opacity: 0.4,
+        visible: layerVisibility.redFlagWarnings,
+        opacity: 0.7,
+        renderer: new UniqueValueRenderer({
+          field: "Status",
+          defaultSymbol: new SimpleFillSymbol({
+            color: [255, 0, 0, 0.2],
+            outline: {
+              color: [255, 0, 0],
+              width: 2
+            }
+          })
+        }),
         popupTemplate: {
           title: "Red Flag Warning",
           content: [
             {
               type: "fields",
               fieldInfos: [
-                { fieldName: "prod_type", label: "Warning Type" },
-                { fieldName: "starttime", label: "Start Time" },
-                { fieldName: "endtime", label: "End Time" },
-                { fieldName: "description", label: "Description" }
+                { fieldName: "Status", label: "Status" },
+                { fieldName: "Effective", label: "Start Time" },
+                { fieldName: "Expires", label: "End Time" },
+                { fieldName: "Event", label: "Event Type" }
               ]
             }
           ]
@@ -190,12 +386,16 @@ export default function FireMap() {
 
       // Add layers to map in specific order
       map.addMany([
-        redFlagLayer,
-        evacuationZonesLayer,
+        // fireWeatherLayer,
+        // evacTimeLayer,
+        // evacuationAreasLayer,
+        redFlagWarningsLayer,
+        currentEvacAreasLayer,
+        // watchEvacAreasLayer,
         firePerimetersLayer,
         activeFiresLayer,
-        hotspotLayer,
-        fireStationsLayer
+        // hotspotLayer,
+        // fireStationsLayer
       ]);
       view.graphics.add(uclaMarker);
 
@@ -269,10 +469,19 @@ export default function FireMap() {
           }
         });
       });
+
+      // Update layer visibility when props change
+      return () => {
+        if (map) {
+          map.destroy();
+        }
+      };
     }
-  }, []);
+  }, [layerVisibility]); // Add layerVisibility to dependency array
 
   return (
-    <div ref={mapDiv} className="w-full h-full rounded-lg border border-gray-200 overflow-hidden relative" />
+    <div className="w-full h-[600px] rounded-lg border border-gray-200 overflow-hidden relative">
+      <div ref={mapDiv} className="w-full h-full" />
+    </div>
   );
 } 

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 interface AirQualityData {
   ParameterName: string;
   AQI: number;
@@ -73,6 +75,9 @@ export async function GET() {
         }
       };
     });
+
+    console.log(historicalData);
+    console.log(data);
 
     return NextResponse.json({
       current: {

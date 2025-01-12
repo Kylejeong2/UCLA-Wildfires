@@ -42,6 +42,8 @@ export default function CampusAlerts() {
 
   return (
     <div className="space-y-4">
+        <h1 className="text-2xl font-bold">UCLA Alerts</h1>
+        <p className="text-sm">Via https://bso.ucla.edu/</p>
       {alerts.map((alert) => (
         <div
           key={alert.id}

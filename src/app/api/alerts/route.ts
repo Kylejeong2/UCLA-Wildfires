@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 // not currently used
 
+export const runtime = 'edge';
+
 interface Alert {
   id: string;
   type: 'emergency' | 'warning' | 'info';

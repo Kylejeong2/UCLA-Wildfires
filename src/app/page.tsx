@@ -1,38 +1,78 @@
-import Image from "next/image";
-import dynamic from "next/dynamic";
-// import LiveChat from "../components/LiveChat";
-import CampusAlerts from "../components/CampusAlerts";
-import AirQuality from "../components/AirQuality";
-import LiveCameras from "../components/LiveCameras";
+"use client"
 
-// Dynamically load map component to prevent SSR issues
-const FireMap = dynamic(() => import("../components/FireMap"), { ssr: false });
+import { useState } from 'react';
+import Image from "next/image";
+
+import FireMap from '@/components/FireMap';
+import AirQuality from '@/components/AirQuality';
+import CampusAlerts from '@/components/CampusAlerts';
+// import LiveChat from '@/components/LiveChat';
+import LiveCameras from '@/components/LiveCameras';
 
 export default function Home() {
+  const [layerVisibility, setLayerVisibility] = useState({
+    // Fire Layers
+    activeFires: true,
+    firePerimeters: true,
+    redFlagWarnings: false,
+    // hotspots: true,
+    // fireWeather: true,
+    // fireStations: true,
+    
+    // Evacuation Layers
+    // estimatedEvacTime: false,  // EstimatedGroundEvacuationTime
+    // evacuationAreas: false,    // Evacuation_Areas
+    currentEvacAreas: true,   // EvacuationAreas
+    // watchEvacAreas: false,     // 2024Watch_EvacuationAreas_Public
+  });
+
+  const LAYER_LABELS = {
+    // Fire Layers
+    activeFires: "Active Fires",
+    firePerimeters: "Fire Perimeters",
+    redFlagWarnings: "Red Flag Warnings",
+    // hotspots: "Thermal Hotspots",
+    // fireWeather: "Fire Weather",
+    // fireStations: "Fire Stations",
+    
+    // Evacuation Layers
+    // estimatedEvacTime: "Evacuation Time Estimates",
+    // evacuationAreas: "Evacuation Areas",
+    currentEvacAreas: "Current Evacuation Areas",
+    // watchEvacAreas: "2024 Watch Areas"
+  };
+
+  const toggleLayer = (layer: keyof typeof layerVisibility) => {
+    setLayerVisibility(prev => ({
+      ...prev,
+      [layer]: !prev[layer]
+    }));
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-blue-600 shadow-lg top-0 z-50">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center py-4 sm:h-16">
-            <div className="flex items-center gap-4 mb-4 sm:mb-0">
-              <div className="text-white text-2xl font-bold">UCLA</div>
-              <div className="h-8 w-px bg-white/20 hidden sm:block"></div>
-              <h1 className="text-white text-2xl font-bold">Wildfire Watch</h1>
+          <div className="flex flex-col sm:flex-row justify-between items-center py-4 sm:py-6 sm:h-24">
+            <div className="flex items-center gap-6">
+              <div className="text-white text-3xl font-bold">UCLA</div>
+              <div className="h-10 w-px bg-white/20 hidden sm:block"></div>
+              <h1 className="text-white text-3xl font-bold hidden sm:block">Wildfire Watch</h1>
             </div>
 
-            <div className="flex items-center">
-              <a className="text-white text-sm font-medium p-4" href="mailto:kylejeong@ucla.edu">
+            <div className="flex items-center gap-4">
+              <a className="text-white text-base font-medium p-4 hover:text-white/80 transition-colors hidden sm:block" href="mailto:kylejeong@ucla.edu">
                 Request a Feature
               </a>
               <a href="https://www.instagram.com/vestucla/" target="_blank" rel="noopener noreferrer">
-                <div className="w-[160px] h-[40px] bg-white/10 rounded-lg flex items-center justify-center gap-2 text-white text-sm font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
+                <div className="w-[160px] sm:w-[200px] h-[45px] sm:h-[50px] bg-white/10 rounded-lg flex items-center justify-center gap-3 text-white text-base font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
                   <span>powered by</span>
                   <Image 
                     src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
                     alt="UCLA Logo"
-                    width={50}
-                    height={50}
+                    width={70}
+                    height={70}
                     className="object-contain" 
                   />
                 </div>
@@ -42,60 +82,72 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* Main Dashboard Grid */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Map and Alerts - Full width on mobile */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Fire Map */}
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-                <h2 className="text-xl font-bold text-gray-800">Live Fire Map</h2>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                  <p className="text-sm text-gray-500">Via https://www.fire.ca.gov/</p>
-                  <div className="text-sm text-gray-500">
-                    Showing active fires around UCLA
-                  </div>
+      {/* Main Dashboard */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Map and Toggles */}
+          <div className="lg:col-span-2 space-y-6">
+            <FireMap layerVisibility={layerVisibility} />
+            
+            {/* Layer Toggles */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Map Layers</h3>
+              
+              {/* Fire Layers Section */}
+              <div className="mb-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Fire Information</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(LAYER_LABELS)
+                    .filter(([key]) => !key.includes('vac')) // Filter for fire layers
+                    .map(([key, label]) => (
+                      <div key={key} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={layerVisibility[key as keyof typeof layerVisibility]}
+                          onChange={() => toggleLayer(key as keyof typeof layerVisibility)}
+                          className="form-checkbox h-4 w-4 text-ucla-blue rounded border-gray-300 focus:ring-ucla-blue"
+                        />
+                        <label className="text-sm text-gray-700">{label}</label>
+                      </div>
+                    ))}
                 </div>
               </div>
-              <div className="h-[400px] sm:h-[600px] rounded-lg overflow-hidden border border-gray-100">
-                <FireMap />
+
+              {/* Evacuation Layers Section */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Evacuation Zones</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(LAYER_LABELS)
+                    .filter(([key]) => key.includes('vac')) // Filter for evacuation layers
+                    .map(([key, label]) => (
+                      <div key={key} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={layerVisibility[key as keyof typeof layerVisibility]}
+                          onChange={() => toggleLayer(key as keyof typeof layerVisibility)}
+                          className="form-checkbox h-4 w-4 text-ucla-blue rounded border-gray-300 focus:ring-ucla-blue"
+                        />
+                        <label className="text-sm text-gray-700">{label}</label>
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Full width on mobile */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Air Quality Section */}
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <AirQuality />
-            </div>
-
-            {/* Campus Alerts */}
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-                <h2 className="text-xl font-bold text-gray-800">Campus Alerts</h2>
-                <a 
-                  href="https://bso.ucla.edu" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:text-blue-800"
-                >
-                  Bruins Safe Online
-                </a>
-              </div>
-              <CampusAlerts />
-            </div>
-          </div>
-
-          {/* Bottom Row - Camera Feeds */}
-          <div className="col-span-1 lg:col-span-12">
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-              <LiveCameras />
-            </div>
+          {/* Right Column */}
+          <div className="space-y-8">
+            <AirQuality />
+            <CampusAlerts />
+            {/* <LiveChat /> */}
           </div>
         </div>
-      </main>
-    </div>
+
+        {/* Camera Feeds */}
+        <div className="mt-8">
+          <LiveCameras />
+        </div>
+      </div>
+    </main>
   );
 }

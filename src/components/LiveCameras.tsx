@@ -118,23 +118,21 @@ export default function LiveCameras() {
         {UCLA_CAMERAS.map((camera) => (
           <div 
             key={camera.id}
-            className="aspect-video bg-gray-100 rounded-lg relative overflow-hidden group cursor-pointer"
+            className="flex flex-col bg-white rounded-lg shadow-sm overflow-hidden group cursor-pointer"
             onClick={() => setSelectedCamera(camera)}
           >
-            <iframe
-              src={camera.url}
-              className="w-full h-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="absolute bottom-3 left-3 right-3">
-              <div className="text-sm font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                {camera.name}
-              </div>
-              <div className="text-xs text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
-                {camera.location}
-              </div>
+            <div className="aspect-video bg-gray-100 relative overflow-hidden">
+              <iframe
+                src={camera.url}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            <div className="p-2 bg-white">
+              <div className="text-sm font-medium text-gray-900">{camera.name}</div>
+              <div className="text-xs text-gray-500">{camera.location}</div>
             </div>
           </div>
         ))}
