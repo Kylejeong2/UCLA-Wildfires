@@ -2,12 +2,21 @@
 
 import { useState } from 'react';
 import Image from "next/image";
+import dynamic from 'next/dynamic';
 
-import FireMap from '@/components/FireMap';
-import AirQuality from '@/components/AirQuality';
-import CampusAlerts from '@/components/CampusAlerts';
-// import LiveChat from '@/components/LiveChat';
-import LiveCameras from '@/components/LiveCameras';
+// Dynamic imports for components that use browser APIs
+const FireMap = dynamic(() => import('@/components/FireMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[600px] rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+      <div className="animate-pulse text-gray-500">Loading map...</div>
+    </div>
+  )
+});
+
+const AirQuality = dynamic(() => import('@/components/AirQuality'), { ssr: false });
+const CampusAlerts = dynamic(() => import('@/components/CampusAlerts'), { ssr: false });
+const LiveCameras = dynamic(() => import('@/components/LiveCameras'), { ssr: false });
 
 export default function Home() {
   const [layerVisibility, setLayerVisibility] = useState({
@@ -54,26 +63,26 @@ export default function Home() {
       {/* Header */}
       <header className="bg-blue-600 shadow-lg top-0 z-50">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center py-4 sm:py-6 sm:h-24">
-            <div className="flex items-center gap-6">
-              <div className="text-white text-3xl font-bold">UCLA</div>
-              <div className="h-10 w-px bg-white/20 hidden sm:block"></div>
-              <h1 className="text-white text-3xl font-bold hidden sm:block">Wildfire Watch</h1>
+          <div className="flex justify-between items-center h-16 sm:h-24">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className="text-white text-2xl sm:text-3xl font-bold">UCLA</div>
+              <div className="h-8 sm:h-10 w-px bg-white/20"></div>
+              <h1 className="text-white text-2xl sm:text-2xl font-bold">Wildfire Watch</h1>
             </div>
 
-            <div className="flex items-center gap-4">
-              <a className="text-white text-base font-medium p-4 hover:text-white/80 transition-colors hidden sm:block" href="mailto:kylejeong@ucla.edu">
+            <div className="flex items-center">
+              <a className="text-white text-sm sm:text-base font-medium p-2 sm:p-4 hover:text-white/80 transition-colors hidden sm:block" href="mailto:kylejeong@ucla.edu">
                 Request a Feature
               </a>
               <a href="https://www.instagram.com/vestucla/" target="_blank" rel="noopener noreferrer">
-                <div className="w-[160px] sm:w-[200px] h-[45px] sm:h-[50px] bg-white/10 rounded-lg flex items-center justify-center gap-3 text-white text-base font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
-                  <span>powered by</span>
+                <div className="w-[140px] sm:w-[200px] h-[40px] sm:h-[50px] bg-white/10 rounded-lg flex items-center justify-center gap-2 sm:gap-3 text-white text-sm sm:text-base font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
+                  <span className="hidden sm:block">powered by</span>
                   <Image 
                     src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
                     alt="UCLA Logo"
-                    width={70}
-                    height={70}
-                    className="object-contain" 
+                    width={60}
+                    height={60}
+                    className="object-contain sm:w-[70px] sm:h-[70px]" 
                   />
                 </div>
               </a>

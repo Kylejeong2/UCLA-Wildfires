@@ -15,6 +15,12 @@ import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
 import Search from "@arcgis/core/widgets/Search";
 import Expand from "@arcgis/core/widgets/Expand";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
+import ResizeObserver from 'resize-observer-polyfill';
+
+// Polyfill ResizeObserver if it doesn't exist
+if (typeof window !== 'undefined' && !window.ResizeObserver) {
+  window.ResizeObserver = ResizeObserver;
+}
 
 interface FireMapProps {
   layerVisibility: {
