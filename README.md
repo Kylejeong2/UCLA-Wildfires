@@ -1,68 +1,70 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
+# UCLA Wildfire Watch Dashboard
+
+A real-time wildfire monitoring and emergency response dashboard for the UCLA campus and surrounding areas.
+
+## Features
+
+- **Live Fire Map**: Interactive map showing active fires, fire perimeters, thermal hotspots, and evacuation zones around UCLA using ArcGIS
+- **Air Quality Monitoring**: Real-time AQI data with historical trends and pollutant breakdowns
+- **Campus Alerts**: Emergency notifications and updates from UCLA Emergency Management
+- **Live Camera Feeds**: Access to AlertCalifornia camera feeds monitoring fire-prone areas
+- **Emergency Resources**: Quick access to emergency services, evacuation centers, and medical facilities
+
+## Tech Stack
+
+- Next.js 14 with App Router
+- TypeScript
+- TailwindCSS
+- ArcGIS JavaScript API
+- Chart.js
+- Cloudflare Pages for deployment
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file with required API keys:
+
+```bash
+AIRNOW_API_KEY=your_key_here
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000)
 
-## Cloudflare integration
+## Project Structure
 
-Besides the `dev` script mentioned above `c3` has added a few extra scripts that allow you to integrate the application with the [Cloudflare Pages](https://pages.cloudflare.com/) environment, these are:
-  - `pages:build` to build the application for Pages using the [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages) CLI
-  - `preview` to locally preview your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
-  - `deploy` to deploy your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
+- `/src/app`: Next.js app router pages and API routes
+- `/src/components`: React components including FireMap, AirQuality, and CampusAlerts
+- `/public`: Static assets and images
 
-> __Note:__ while the `dev` script is optimal for local development you should preview your Pages application as well (periodically or before deployments) in order to make sure that it can properly work in the Pages environment (for more details see the [`@cloudflare/next-on-pages` recommended workflow](https://github.com/cloudflare/next-on-pages/blob/main/internal-packages/next-dev/README.md#recommended-development-workflow))
+## API Endpoints
 
-### Bindings
+- `/api/air-quality`: Fetches real-time AQI data for UCLA area
+- `/api/alerts`: Manages campus emergency alerts
 
-Cloudflare [Bindings](https://developers.cloudflare.com/pages/functions/bindings/) are what allows you to interact with resources available in the Cloudflare Platform.
+## Contributing
 
-You can use bindings during development, when previewing locally your application and of course in the deployed application:
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
 
-- To use bindings in dev mode you need to define them in the `next.config.js` file under `setupDevBindings`, this mode uses the `next-dev` `@cloudflare/next-on-pages` submodule. For more details see its [documentation](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md).
+## License
 
-- To use bindings in the preview mode you need to add them to the `pages:preview` script accordingly to the `wrangler pages dev` command. For more details see its [documentation](https://developers.cloudflare.com/workers/wrangler/commands/#dev-1) or the [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+MIT
 
-- To use bindings in the deployed application you will need to configure them in the Cloudflare [dashboard](https://dash.cloudflare.com/). For more details see the  [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+## Credits
 
-#### KV Example
-
-`c3` has added for you an example showing how you can use a KV binding.
-
-In order to enable the example:
-- Search for javascript/typescript lines containing the following comment:
-  ```ts
-  // KV Example:
-  ```
-  and uncomment the commented lines below it (also uncomment the relevant imports).
-- Do the same in the `wrangler.toml` file, where
-  the comment is:
-  ```
-  # KV Example:
-  ```
-- If you're using TypeScript run the `cf-typegen` script to update the `env.d.ts` file:
-  ```bash
-  npm run cf-typegen
-  # or
-  yarn cf-typegen
-  # or
-  pnpm cf-typegen
-  # or
-  bun cf-typegen
-  ```
-
-After doing this you can run the `dev` or `preview` script and visit the `/api/hello` route to see the example in action.
-
-Finally, if you also want to see the example work in the deployed application make sure to add a `MY_KV_NAMESPACE` binding to your Pages application in its [dashboard kv bindings settings section](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions#kv_namespace_bindings_section). After having configured it make sure to re-deploy your application.
+- Fire data provided by [fire.ca.gov](https://www.fire.ca.gov/)
+- Camera feeds from [AlertCalifornia](https://cameras.alertcalifornia.org)
+- Air quality data from [AirNow API](https://www.airnowapi.org/)

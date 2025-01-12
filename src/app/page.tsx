@@ -1,101 +1,101 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
+// import LiveChat from "../components/LiveChat";
+import CampusAlerts from "../components/CampusAlerts";
+import AirQuality from "../components/AirQuality";
+import LiveCameras from "../components/LiveCameras";
+
+// Dynamically load map component to prevent SSR issues
+const FireMap = dynamic(() => import("../components/FireMap"), { ssr: false });
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-blue-600 shadow-lg top-0 z-50">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center py-4 sm:h-16">
+            <div className="flex items-center gap-4 mb-4 sm:mb-0">
+              <div className="text-white text-2xl font-bold">UCLA</div>
+              <div className="h-8 w-px bg-white/20 hidden sm:block"></div>
+              <h1 className="text-white text-2xl font-bold">Wildfire Watch</h1>
+            </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <div className="flex items-center">
+              <a className="text-white text-sm font-medium p-4" href="mailto:kylejeong@ucla.edu">
+                Request a Feature
+              </a>
+              <a href="https://www.instagram.com/vestucla/" target="_blank" rel="noopener noreferrer">
+                <div className="w-[160px] h-[40px] bg-white/10 rounded-lg flex items-center justify-center gap-2 text-white text-sm font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
+                  <span>powered by</span>
+                  <Image 
+                    src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
+                    alt="UCLA Logo"
+                    width={50}
+                    height={50}
+                    className="object-contain" 
+                  />
+                </div>
+              </a>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      {/* Main Dashboard Grid */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Map and Alerts - Full width on mobile */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* Fire Map */}
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                <h2 className="text-xl font-bold text-gray-800">Live Fire Map</h2>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                  <p className="text-sm text-gray-500">Via https://www.fire.ca.gov/</p>
+                  <div className="text-sm text-gray-500">
+                    Showing active fires around UCLA
+                  </div>
+                </div>
+              </div>
+              <div className="h-[400px] sm:h-[600px] rounded-lg overflow-hidden border border-gray-100">
+                <FireMap />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Full width on mobile */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Air Quality Section */}
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+              <AirQuality />
+            </div>
+
+            {/* Campus Alerts */}
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                <h2 className="text-xl font-bold text-gray-800">Campus Alerts</h2>
+                <a 
+                  href="https://bso.ucla.edu" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Bruins Safe Online
+                </a>
+              </div>
+              <CampusAlerts />
+            </div>
+          </div>
+
+          {/* Bottom Row - Camera Feeds */}
+          <div className="col-span-1 lg:col-span-12">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+              <LiveCameras />
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

@@ -1,0 +1,92 @@
+UCLA Fire Dashboard Specification
+
+1. Core Dashboard Features
+   - Real-time fire incident map centered on UCLA and surrounding areas
+   - Current fire status indicators (active, contained, extinguished)
+   - Time-based data visualization (fire progression)
+   - Risk level indicator for UCLA campus
+
+2. Air Quality Monitoring
+   - Real-time AQI (Air Quality Index) display
+   - Historical AQI trends
+   - Pollutant breakdown (PM2.5, PM10, etc.)
+   - Health recommendations based on current AQI
+   - Air quality forecasting
+
+3. Resource Directory
+   - Region-based organization
+   - Categories:
+     * Emergency Services
+     * Evacuation Centers
+     * Medical Facilities
+     * Water/Supply Distribution Points
+     * Transportation Services
+   - Interactive map showing resource locations
+   - Real-time availability status
+   - Contact information for each resource
+
+4. AI Chatbot Assistant
+   - Natural language query support
+   - Features:
+     * Resource recommendations based on location
+     * Emergency procedure guidance
+     * Real-time updates on fire status
+     * Evacuation route suggestions
+     * FAQ responses
+   - Integration with resource directory
+   - Multi-language support
+
+5. Live Chat System
+   - Community discussion forums
+   - Direct messaging with emergency responders
+   - Real-time updates from official sources
+   - Moderation system
+   - File/image sharing capabilities
+   - Emergency broadcast channel
+
+6. Campus Alert System
+   - Push notifications
+   - Priority-based alert levels
+   - Categories:
+     * Immediate Evacuation Notices
+     * Air Quality Warnings
+     * Road Closure Updates
+     * Safety Instructions
+     * Resource Availability Updates
+   - SMS/Email integration
+   - Historical alert log
+
+7. Live Camera Feeds
+   - Multiple camera viewpoints around campus
+   - Time-stamped footage
+   - Pan/tilt/zoom capabilities where available
+   - Screenshot capability
+   - Historical footage access
+   - Key location coverage:
+     * Major campus entrances
+     * Evacuation routes
+     * High-risk areas
+     * Emergency assembly points
+
+8. Technical Requirements
+   - Real-time data synchronization
+   - Mobile-responsive design
+   - Offline functionality for critical features
+   - Low-latency updates
+   - Secure authentication system
+   - Data backup and redundancy
+   - API integrations:
+     * Fire department data
+     * Weather services
+     * Air quality monitoring stations
+     * Emergency services
+     * UCLA campus systems
+
+9. Data Sources
+   - LA Fire Department API
+   - EPA Air Quality System
+   - UCLA Emergency Management
+   - National Weather Service
+   - Local traffic cameras
+   - Community reports
+   - Official emergency broadcasts
