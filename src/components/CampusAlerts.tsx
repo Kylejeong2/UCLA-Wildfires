@@ -86,7 +86,7 @@ export default function CampusAlerts() {
                   <span className="text-xs hover:underline shrink-0">Read More →</span>
                 </div>
                 <div className="mt-2 text-xs opacity-75">
-                  {alert.summary.length > 50 ? `${alert.summary.substring(0, 50)}...` : alert.summary}
+                  {alert.summary.length > 100 ? `${alert.summary.substring(0, 100)}...` : alert.summary}
                 </div>
               </div>
             </div>
