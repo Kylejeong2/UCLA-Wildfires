@@ -59,7 +59,7 @@ export async function GET() {
     }
 
     const data = (await response.json()) as AirQualityData[];
-    console.log('Raw AirNow Response:', data);
+    // console.log('Raw AirNow Response:', data);
     if (!data || data.length === 0) {
       throw new Error('No AQI data available');
     }

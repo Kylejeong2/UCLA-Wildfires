@@ -160,6 +160,28 @@ export default function Home() {
           <LiveCameras />
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 border-t border-gray-200 py-8 mt-16">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <a href="https://www.instagram.com/vestucla/" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <span className="text-sm">Powered by</span>
+              <Image 
+                src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
+                alt="UCLA Logo"
+                width={70}
+                height={70}
+                className="object-contain" 
+              />
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
