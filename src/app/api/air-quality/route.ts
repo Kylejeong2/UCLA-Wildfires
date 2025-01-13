@@ -38,8 +38,16 @@ export async function GET() {
     const lon = '-118.4452';
     const apiKey = process.env.AIRNOW_API_KEY;
 
+    // Get current time in PST
+    const now = new Date();
+    const pstTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+    
+    // Format date for AirNow API (YYYY-MM-DD)
+    const date = pstTime.toISOString().split('T')[0];
+    const hour = pstTime.getHours();
+
     const response = await fetch(
-      `https://www.airnowapi.org/aq/observation/latLong/current/?format=application/json&latitude=${lat}&longitude=${lon}&distance=25&API_KEY=${apiKey}`
+      `https://www.airnowapi.org/aq/observation/latLong/current/?format=application/json&latitude=${lat}&longitude=${lon}&distance=25&date=${date}&hour=${hour}&API_KEY=${apiKey}`
     );
 
     if (!response.ok) {
@@ -47,7 +55,11 @@ export async function GET() {
     }
 
     const data = (await response.json()) as AirQualityData[];
-    
+    console.log('Raw AirNow Response:', data);
+    if (!data || data.length === 0) {
+      throw new Error('No AQI data available');
+    }
+
     // Process current AQI data
     const pm25 = data.find(p => p.ParameterName === 'PM2.5')?.AQI || 0;
     const pm10 = data.find(p => p.ParameterName === 'PM10')?.AQI || 0;
@@ -56,18 +68,22 @@ export async function GET() {
     const maxAQI = Math.max(pm25, pm10, o3);
     const { category, color } = getAQICategory(maxAQI);
 
-    // For demo purposes, generate historical data
+    // For historical data, generate last 24 hours from current time
     const historicalData = Array.from({ length: 24 }, (_, i) => {
       const baseValue = maxAQI;
       const randomVariation = Math.floor(Math.random() * 20) - 10; // +/- 10
       const value = Math.max(0, Math.min(500, baseValue + randomVariation));
       const { category, color } = getAQICategory(value);
       
+      // Calculate timestamp for each hour going backwards from current time
+      const timestamp = new Date(pstTime);
+      timestamp.setHours(timestamp.getHours() - (23 - i));
+      
       return {
         value,
         category,
         color,
-        timestamp: new Date(Date.now() - (23 - i) * 3600000),
+        timestamp,
         pollutants: {
           pm25: Math.max(0, pm25 + Math.floor(Math.random() * 10) - 5),
           pm10: Math.max(0, pm10 + Math.floor(Math.random() * 10) - 5),
@@ -76,15 +92,12 @@ export async function GET() {
       };
     });
 
-    console.log(historicalData);
-    console.log(data);
-
     return NextResponse.json({
       current: {
         value: maxAQI,
         category,
         color,
-        timestamp: new Date(),
+        timestamp: pstTime,
         pollutants: {
           pm25,
           pm10,
