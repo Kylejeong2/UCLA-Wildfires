@@ -6,7 +6,7 @@ import { DataProvider } from "@/context/DataContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Area near Westwood Fire Map",
+  title: "Westwood Fire Map",
   description: "Real-time fire monitoring and alerts for the Westwood community",
 };
 
