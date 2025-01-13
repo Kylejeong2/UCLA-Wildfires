@@ -5,7 +5,7 @@ export const runtime = 'edge';
 
 export async function GET() {
   try {
-    const response = await fetch('https://bso.ucla.edu/', {
+    const response = await fetch('https://bso.ucla.edu/', { // UCLA's BSO website
       next: { revalidate: 900 } // Cache for 15 minutes
     });
 
@@ -15,19 +15,36 @@ export async function GET() {
 
     const html = await response.text();
     const $ = cheerio.load(html);
-    const alerts = [];
+    const alerts: any[] = [];
 
-    // Find all article elements within the views-field-rendered-entity
-    $('.views-field-rendered-entity article').each((_, article) => {
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    // Extract emergency banner if present
+    const emergencyBanner = $('#block-siteden-surface-sitewidealert .bsoalert--error').text().trim();
+    if (emergencyBanner) {
+      alerts.push({
+        id: 'emergency-banner',
+        title: emergencyBanner,
+        date: new Date().toISOString(),
+        link: 'https://bso.ucla.edu',
+        type: 'emergency',
+        categories: ['Emergency'],
+        summary: emergencyBanner
+      });
+    }
+
+    // Extract articles
+    $('article.node--type-sf-article').each((_, article) => {
       const $article = $(article);
       
       // Extract title and link
-      const titleElement = $article.find('.article__title a');
-      const title = titleElement.find('.field--name-title').text().trim();
-      const link = 'https://bso.ucla.edu' + titleElement.attr('href');
+      const titleElement = $article.find('.article__title a .field--name-title');
+      const title = titleElement.text().trim();
+      const link = 'https://bso.ucla.edu' + $article.find('.article__title a').attr('href');
 
       // Extract date
-      const dateElement = $article.find('.field--name-created time');
+      const dateElement = $article.find('.article__meta time');
       const date = dateElement.attr('datetime') || dateElement.text().trim();
 
       // Extract categories
@@ -65,32 +82,18 @@ export async function GET() {
         type = 'warning';
       }
 
-      alerts.push({
-        id: Buffer.from(link).toString('base64'),
-        title,
-        date,
-        link,
-        type,
-        categories,
-        summary
-      });
-    });
-
-    // If no articles found, check for emergency banner
-    if (alerts.length === 0) {
-      const emergencyBanner = $('.emergency-banner').text().trim();
-      if (emergencyBanner) {
+      if (new Date(date) >= threeDaysAgo) {
         alerts.push({
-          id: 'emergency-banner',
-          title: emergencyBanner,
-          date: new Date().toISOString(),
-          link: 'https://bso.ucla.edu',
-          type: 'emergency',
-          categories: ['Emergency'],
-          summary: emergencyBanner
+          id: Buffer.from(link).toString('base64'),
+          title: title.length > 25 ? `${title.slice(0, 25)}...` : title,
+          date,
+          link,
+          type,
+          categories,
+          summary
         });
       }
-    }
+    });
 
     return NextResponse.json(alerts);
   } catch (error) {

@@ -38,6 +38,10 @@ export async function GET() {
     const lon = '-118.4452';
     const apiKey = process.env.AIRNOW_API_KEY;
 
+    if(!apiKey) {
+      throw new Error('No AIRNOW API key provided');
+    }
+
     // Get current time in PST
     const now = new Date();
     const pstTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));

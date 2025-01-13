@@ -88,56 +88,53 @@ export default function AirQuality() {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Current AQI Display */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-black">Current AQI</h3>
-          <p className="text-sm text-black">Provided by AirNow</p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold" style={{ color: current.color }}>
+    <div className="space-y-3">
+      {/* Current AQI and Health Recommendation Combined */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white rounded-lg p-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-black">Current AQI</h3>
+              <p className="text-xs text-gray-500">via AirNow</p>
+            </div>
+            <div className="text-right text-xs text-gray-500">
+              {new Date(current.timestamp).toLocaleTimeString()}
+            </div>
+          </div>
+          <div className="mt-1 flex items-baseline gap-1">
+            <span className="text-3xl font-bold" style={{ color: current.color }}>
               {current.value}
             </span>
-            <span className="text-lg text-black">{current.category}</span>
+            <span className="text-sm text-gray-700">{current.category}</span>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-black">Last updated:</p>
-          <p className="text-sm text-black">
-            {new Date(current.timestamp).toLocaleString()}
-          </p>
-        </div>
-      </div>
 
-      {/* Health Recommendation */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2 text-black">Health Recommendation</h4>
-        <p className="text-sm text-black">{getHealthRecommendation(current.value)}</p>
+        <div className="bg-gray-50 rounded-lg p-2">
+          <h4 className="text-sm font-medium text-gray-700 mb-1">Health Advisory</h4>
+          <p className="text-xs text-gray-600 line-clamp-2">{getHealthRecommendation(current.value)}</p>
+        </div>
       </div>
 
       {/* Pollutant Breakdown */}
-      <div>
-        <h4 className="font-medium mb-2 text-black">Pollutant Levels</h4>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white p-3 rounded-lg shadow-sm">
-            <p className="text-sm text-black">PM2.5</p>
-            <p className="text-lg font-semibold text-black">{current.pollutants.pm25} µg/m³</p>
-          </div>
-          <div className="bg-white p-3 rounded-lg shadow-sm">
-            <p className="text-sm text-black">PM10</p>
-            <p className="text-lg font-semibold text-black">{current.pollutants.pm10} µg/m³</p>
-          </div>
-          <div className="bg-white p-3 rounded-lg shadow-sm">
-            <p className="text-sm text-black">Ozone</p>
-            <p className="text-lg font-semibold text-black">{current.pollutants.o3} ppb</p>
-          </div>
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-white p-2 rounded-lg shadow-sm">
+          <p className="text-xs text-gray-600">PM2.5</p>
+          <p className="text-sm font-semibold text-black">{current.pollutants.pm25}</p>
+        </div>
+        <div className="bg-white p-2 rounded-lg shadow-sm">
+          <p className="text-xs text-gray-600">PM10</p>
+          <p className="text-sm font-semibold text-black">{current.pollutants.pm10}</p>
+        </div>
+        <div className="bg-white p-2 rounded-lg shadow-sm">
+          <p className="text-xs text-gray-600">Ozone</p>
+          <p className="text-sm font-semibold text-black">{current.pollutants.o3}</p>
         </div>
       </div>
 
       {/* Historical Trend */}
       <div>
-        <h4 className="font-medium mb-2 text-black">24-Hour Trend</h4>
-        <div className="h-48">
+        <h4 className="text-xs font-medium text-gray-700 mb-1">24-Hour Trend</h4>
+        <div className="h-32">
           <Line
             data={chartData}
             options={{
@@ -146,12 +143,32 @@ export default function AirQuality() {
               plugins: {
                 legend: {
                   display: false
+                },
+                tooltip: {
+                  enabled: true,
+                  mode: 'index',
+                  intersect: false
                 }
               },
               scales: {
                 y: {
                   beginAtZero: true,
-                  max: 500
+                  max: 500,
+                  ticks: {
+                    font: {
+                      size: 10
+                    }
+                  }
+                },
+                x: {
+                  ticks: {
+                    font: {
+                      size: 10
+                    },
+                    maxRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 6
+                  }
                 }
               }
             }}
