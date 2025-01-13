@@ -64,24 +64,27 @@ export default function Home() {
       <header className="bg-blue-600 shadow-lg top-0 z-50">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-24">
-            <div className="flex items-center gap-3 sm:gap-6">
-              <div className="text-white text-2xl sm:text-3xl font-bold">UCLA</div>
-              <div className="h-8 sm:h-10 w-px bg-white/20"></div>
-              <h1 className="text-white text-2xl sm:text-2xl font-bold">Wildfire Watch</h1>
+            <div className="flex items-center gap-2 sm:gap-6">
+              <div className="flex flex-col">
+                <div className="text-white text-lg sm:text-3xl font-bold">UCLA</div>
+                <div className="text-white/60 text-[8px] sm:text-xs">*not officially affiliated</div>
+              </div>
+              <div className="h-6 sm:h-10 w-px bg-white/20"></div>
+              <h1 className="text-white text-base sm:text-2xl font-bold">Wildfire Watch</h1>
             </div>
 
             <div className="flex items-center">
-              <a className="text-white text-sm sm:text-base font-medium p-2 sm:p-4 hover:text-white/80 transition-colors hidden sm:block" href="mailto:kylejeong@ucla.edu">
+              <a className="text-white text-xs sm:text-base font-medium p-1 sm:p-4 hover:text-white/80 transition-colors hidden sm:block" href="mailto:kylejeong@ucla.edu">
                 Request a Feature
               </a>
               <a href="https://www.instagram.com/vestucla/" target="_blank" rel="noopener noreferrer">
-                <div className="w-[140px] sm:w-[200px] h-[40px] sm:h-[50px] bg-white/10 rounded-lg flex items-center justify-center gap-2 sm:gap-3 text-white text-sm sm:text-base font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
+                <div className="w-[120px] sm:w-[200px] h-[32px] sm:h-[50px] bg-white/10 rounded-lg flex items-center justify-center gap-1 sm:gap-3 text-xs sm:text-base font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
                   <span className="hidden sm:block">powered by</span>
                   <Image 
                     src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
                     alt="UCLA Logo"
-                    width={60}
-                    height={60}
+                    width={50}
+                    height={50}
                     className="object-contain sm:w-[70px] sm:h-[70px]" 
                   />
                 </div>
