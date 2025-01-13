@@ -66,8 +66,6 @@ export default function Home() {
           <div className="flex justify-between items-center h-16 sm:h-24">
             <div className="flex items-center gap-2 sm:gap-6">
               <div className="flex flex-col">
-                <div className="text-white text-lg sm:text-3xl font-bold">UCLA</div>
-                <div className="text-white/60 text-[8px] sm:text-xs">*not officially affiliated</div>
               </div>
               <div className="h-6 sm:h-10 w-px bg-white/20"></div>
               <h1 className="text-white text-base sm:text-2xl font-bold">Wildfire Watch</h1>
@@ -82,7 +80,7 @@ export default function Home() {
                   <span className="hidden sm:block">powered by</span>
                   <Image 
                     src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
-                    alt="UCLA Logo"
+                    alt="VEST Logo"
                     width={50}
                     height={50}
                     className="object-contain sm:w-[70px] sm:h-[70px]" 
@@ -173,7 +171,7 @@ export default function Home() {
               <span className="text-sm">Powered by</span>
               <Image 
                 src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
-                alt="UCLA Logo"
+                alt="VEST Logo"
                 width={70}
                 height={70}
                 className="object-contain" 
