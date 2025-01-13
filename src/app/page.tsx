@@ -79,7 +79,7 @@ export default function Home() {
                 <div className="w-[120px] sm:w-[200px] h-[32px] sm:h-[50px] bg-white/10 rounded-lg flex items-center justify-center gap-1 sm:gap-3 text-xs sm:text-base font-medium border border-white/20 hover:bg-white/20 transition-colors cursor-pointer">
                   <span className="hidden sm:block">powered by</span>
                   <Image 
-                    src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
+                    src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mmxasjRZlT0YPmw3uVaUCZQIey8GASE42rH76"
                     alt="VEST Logo"
                     width={50}
                     height={50}
@@ -170,7 +170,7 @@ export default function Home() {
             >
               <span className="text-sm">Powered by</span>
               <Image 
-                src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mVeHOqfYhcQ2vJK1dAe5mOnIjiySl03wFfWDM"
+                src="https://fg5si9hh45.ufs.sh/f/S5FODHw5IM4mmxasjRZlT0YPmw3uVaUCZQIey8GASE42rH76"
                 alt="VEST Logo"
                 width={70}
                 height={70}
