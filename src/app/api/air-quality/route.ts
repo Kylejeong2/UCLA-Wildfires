@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import redis from '@/lib/redis';
 
 export const runtime = 'edge';
 
@@ -33,6 +34,16 @@ function getAQICategory(value: number) {
 
 export async function GET() {
   try {
+    // Check cache first
+    const cachedData = await redis.get('air_quality_data');
+    console.log('Cached AQ data:', cachedData);
+    
+    if (cachedData) {
+      // Handle both string and object cases
+      const parsedData = typeof cachedData === 'string' ? JSON.parse(cachedData) : cachedData;
+      return NextResponse.json(parsedData);
+    }
+
     // UCLA's coordinates
     const lat = '34.0689';
     const lon = '-118.4452';
@@ -96,7 +107,7 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json({
+    const result = {
       current: {
         value: maxAQI,
         category,
@@ -109,9 +120,18 @@ export async function GET() {
         }
       },
       historical: historicalData
-    });
+    };
+
+    console.log('Setting AQ cache with:', result);
+    // Cache the result for 15 minutes
+    await redis.set('air_quality_data', JSON.stringify(result), { ex: 900 });
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error('AQI API Error:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', error.message, error.stack);
+    }
     return NextResponse.json(
       { error: 'Failed to fetch air quality data' },
       { status: 500 }

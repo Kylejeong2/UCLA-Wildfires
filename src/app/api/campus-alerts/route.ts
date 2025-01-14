@@ -1,12 +1,23 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
+import redis from '@/lib/redis';
 
 export const runtime = 'edge';
 
 export async function GET() {
   try {
-    const response = await fetch('https://bso.ucla.edu/', { // UCLA's BSO website
-      next: { revalidate: 900 } // Cache for 15 minutes
+    // Check cache first
+    const cachedData = await redis.get('campus_alerts_data');
+    console.log('Cached alerts data:', cachedData);
+    
+    if (cachedData) {
+      // Handle both string and object cases
+      const parsedData = typeof cachedData === 'string' ? JSON.parse(cachedData) : cachedData;
+      return NextResponse.json(parsedData);
+    }
+
+    const response = await fetch('https://bso.ucla.edu/', {
+      next: { revalidate: 900 }
     });
 
     if (!response.ok) {
@@ -95,9 +106,16 @@ export async function GET() {
       }
     });
 
+    console.log('Setting alerts cache with:', alerts);
+    // Cache the alerts for 15 minutes
+    await redis.set('campus_alerts_data', JSON.stringify(alerts), { ex: 900 });
+
     return NextResponse.json(alerts);
   } catch (error) {
     console.error('Error fetching alerts:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', error.message, error.stack);
+    }
     return NextResponse.json([], { status: 500 });
   }
 } 
