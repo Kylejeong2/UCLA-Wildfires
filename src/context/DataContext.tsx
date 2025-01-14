@@ -3,6 +3,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { Alert, AQIData, AppData } from '@/types';
 
+interface CombinedData {
+  airQuality: {
+    current: AQIData;
+    historical: AQIData[];
+  };
+  campusAlerts: Alert[];
+}
+
 const DataContext = createContext<AppData>({
   alerts: [],
   aqiData: {
@@ -28,34 +36,33 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true);
         setError(null);
 
-        const [alertsResponse, aqiResponse] = await Promise.all([
-          fetch('/api/campus-alerts'),
-          fetch('/api/air-quality')
-        ]);
+        const response = await fetch('/api/combined-data');
 
-        if (!alertsResponse.ok || !aqiResponse.ok) {
+        if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
 
-        const [alertsData, aqiData] = await Promise.all([
-          alertsResponse.json(),
-          aqiResponse.json()
-        ]);
+        const data = await response.json() as CombinedData;
 
-        // Type guard for alerts
-        if (!Array.isArray(alertsData)) {
+        // Type guards
+        if (!data || typeof data !== 'object') {
+          throw new Error('Invalid data format');
+        }
+
+        const { airQuality, campusAlerts } = data;
+
+        if (!Array.isArray(campusAlerts)) {
           throw new Error('Invalid alerts data format');
         }
 
-        // Type guard for AQI data
-        if (!aqiData || typeof aqiData !== 'object' || !('current' in aqiData) || !('historical' in aqiData)) {
+        if (!airQuality || typeof airQuality !== 'object' || !('current' in airQuality) || !('historical' in airQuality)) {
           throw new Error('Invalid AQI data format');
         }
 
-        setAlerts(alertsData as Alert[]);
+        setAlerts(campusAlerts);
         setAqiData({
-          current: aqiData.current as AQIData,
-          historical: aqiData.historical as AQIData[]
+          current: airQuality.current,
+          historical: airQuality.historical
         });
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -66,6 +73,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     };
 
     fetchData();
+
+    // Set up polling every 5 minutes
+    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
