@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model AirQualityCache {
+  id        String   @id @default(cuid())
+  value     Int
+  category  String
+  color     String
+  timestamp DateTime
+  pm25      Float
+  pm10      Float
+  o3        Float
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model CampusAlertCache {
+  id         String   @id @default(cuid())
+  title      String
+  summary    String   @db.Text
+  type       String
+  date       DateTime
+  link       String?
+  categories String[]
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+}
